@@ -43,7 +43,7 @@ public class Server implements Runnable {
 	public void register(ActivePeer peer, String... files) {
 		if (peers.containsKey(peer)) {
 			for (String file : files) {
-				peers.get(peer).add(file);// ?
+				peers.get(peer).add(file);
 			}
 		} else {
 			HashSet<String> filesHashSet = new HashSet<>();

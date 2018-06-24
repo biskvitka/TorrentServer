@@ -141,7 +141,7 @@ public class Client {
 		int peerPort = Integer.parseInt(ipPort[1]);
 		ActivePeer peerToDownloadFrom = new ActivePeer(nameOfPeerToDownloadFrom, ipPort[0], peerPort);
 		MiniClient miniClient = new MiniClient(peerToDownloadFrom, params[2], params[3]);
-		miniClient.saveReceivedFile();
+		miniClient.initiateConnectionAndDownloadFile();
 	}
 
 	public static void main(String[] args) {
