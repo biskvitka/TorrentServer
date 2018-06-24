@@ -55,6 +55,6 @@
 
 
 Една подсказваща диаграма:
-<img src="https://github.com/biskvitka/TorrentServer/edit/master/img.png">
+<img src="https://github.com/biskvitka/TorrentServer/blob/master/img.png">
 
 
