@@ -1,11 +1,11 @@
-package bg.uni.sofia.fmi.peer.activeclient;
+package bg.uni.sofia.fmi.peer.activepeer;
 
-public class ActiveClient {
+public class ActivePeer {
 	private String name;
 	private String ip;
 	private int port;
 
-	public ActiveClient(String name, String ip, int port) {
+	public ActivePeer(String name, String ip, int port) {
 		this.name = name;
 		this.ip = ip;
 		this.port = port;
@@ -45,7 +45,7 @@ public class ActiveClient {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ActiveClient other = (ActiveClient) obj;
+		ActivePeer other = (ActivePeer) obj;
 		if (ip == null) {
 			if (other.ip != null)
 				return false;

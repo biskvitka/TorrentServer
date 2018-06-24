@@ -10,7 +10,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-import bg.uni.sofia.fmi.peer.activeclient.ActiveClient;
+import bg.uni.sofia.fmi.peer.activepeer.ActivePeer;
 import bg.uni.sofia.fmi.peer.exception.InactivePeerException;
 import bg.uni.sofia.fmi.peer.exception.InvalidCommandException;
 import bg.uni.sofia.fmi.peer.server.Server;
@@ -47,10 +47,6 @@ public class Client {
 
 	}
 
-	public void startMiniServer() {
-
-	}
-
 	public static Client loginClient(BufferedReader userInput, PrintWriter pw) throws IOException {
 		System.out.print("What is your name: ");
 		String name = userInput.readLine();
@@ -79,9 +75,11 @@ public class Client {
 
 	public void register(PrintWriter pw, String... input) {
 		boolean fileIsRegistered = false;
-		pw.print("register" + " " + this.getName() + " ");
-		for (int i = 2; i < input.length; ++i) {
+		System.out.println("REGISTER");
+		pw.print("register " + this.getName() + " ");
+		for (int i = 1; i < input.length; ++i) {
 			if (new File((input[i])).isFile()) {
+				System.out.println("file");
 				pw.print(input[i]);
 				pw.print(" ");
 				fileIsRegistered = true;
@@ -141,12 +139,12 @@ public class Client {
 
 		String[] ipPort = ipAndPortOfPeer.split(":");
 		int peerPort = Integer.parseInt(ipPort[1]);
-		ActiveClient peerToDownloadFrom = new ActiveClient(nameOfPeerToDownloadFrom, ipPort[0], peerPort);
+		ActivePeer peerToDownloadFrom = new ActivePeer(nameOfPeerToDownloadFrom, ipPort[0], peerPort);
 		MiniClient miniClient = new MiniClient(peerToDownloadFrom, params[2], params[3]);
-		miniClient.saveFile();
+		miniClient.saveReceivedFile();
 	}
 
-	public static void main() {
+	public static void main(String[] args) {
 		// connect to main server
 		try (Socket s = new Socket("localhost", Server.SERVER_PORT);
 				PrintWriter pw = new PrintWriter(s.getOutputStream());

@@ -11,21 +11,21 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import bg.uni.sofia.fmi.peer.activeclient.ActiveClient;
+import bg.uni.sofia.fmi.peer.activepeer.ActivePeer;
 
 public class Server implements Runnable {
-	private static Map<ActiveClient, HashSet<String>> peers = new HashMap<>();
+	private static Map<ActivePeer, HashSet<String>> peers = new HashMap<>();
 	public static final int SERVER_PORT = 4444;
 	private Socket socket;
-	private ActiveClient user;
+	private ActivePeer user;
 
 	public Server(Socket socket) {
 		this.socket = socket;
 	}
 
 	public void listFiles(PrintWriter pw) {
-		for (Map.Entry<ActiveClient, HashSet<String>> peer : peers.entrySet()) {
-			ActiveClient client = peer.getKey();
+		for (Map.Entry<ActivePeer, HashSet<String>> peer : peers.entrySet()) {
+			ActivePeer client = peer.getKey();
 			for (String file : peer.getValue()) {
 				pw.println(client.getName() + " : " + file);
 			}
@@ -34,13 +34,13 @@ public class Server implements Runnable {
 		pw.flush();
 	}
 
-	public void unregister(ActiveClient peer, String... files) {
+	public void unregister(ActivePeer peer, String... files) {
 		for (String file : files) {
 			peers.get(peer).remove(file);
 		}
 	}
 
-	public void register(ActiveClient peer, String... files) {
+	public void register(ActivePeer peer, String... files) {
 		if (peers.containsKey(peer)) {
 			for (String file : files) {
 				peers.get(peer).add(file);// ?
@@ -55,7 +55,7 @@ public class Server implements Runnable {
 	}
 
 	public void listPeers(PrintWriter pw) {
-		for (ActiveClient peer : peers.keySet()) {
+		for (ActivePeer peer : peers.keySet()) {
 			pw.println(peer.getClient());
 		}
 		pw.println();
@@ -75,7 +75,7 @@ public class Server implements Runnable {
 			String line = reader.readLine();
 			System.out.println(line);
 			String[] nameAndPort = line.split(" ");
-			this.user = new ActiveClient(nameAndPort[0], ip, Integer.parseInt(nameAndPort[1]));
+			this.user = new ActivePeer(nameAndPort[0], ip, Integer.parseInt(nameAndPort[1]));
 
 			close: while (true) { // if the client is still connected
 				String wish = reader.readLine();
@@ -105,7 +105,7 @@ public class Server implements Runnable {
 		}
 	}
 
-	public static void main() {
+	public static void main(String[] args) {
 		try (ServerSocket ss = new ServerSocket(SERVER_PORT)) {
 			System.out.println("The server is on");
 			while (true) {

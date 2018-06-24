@@ -11,32 +11,37 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.SocketChannel;
 
-import bg.uni.sofia.fmi.peer.activeclient.ActiveClient;
+import bg.uni.sofia.fmi.peer.activepeer.ActivePeer;
 
 public class MiniClient {
 
-	private ActiveClient miniServer; // miniSever config of the peer who sends the file
+	private ActivePeer miniServerOfSender;
 	private String fileToDownload; // name of the file that will be downloaded
 	private String newFilePath; // final file of interest
 
-	public MiniClient(ActiveClient miniServer, String fileToDownload, String newFilePath) {
-		this.miniServer = miniServer;
+	private void sendFilePathToDownloadFrom(ByteBuffer buffer,
+			SocketChannel clientChannel) throws IOException {
+		buffer.put(fileToDownload.getBytes());
+		buffer.flip();
+		clientChannel.write(buffer);
+		buffer.clear();
+		buffer.flip();
+	}
+	
+	public MiniClient(ActivePeer miniServerOfSender, String fileToDownload, String newFilePath) {
+		this.miniServerOfSender = miniServerOfSender;
 		this.fileToDownload = fileToDownload;
 		this.newFilePath = newFilePath;
 	}
 
-	public void saveFile() throws UnknownHostException {
-		SocketAddress address = new InetSocketAddress(InetAddress.getByName(miniServer.getIp()), miniServer.getPort());
+	public void saveReceivedFile() throws UnknownHostException {
+		SocketAddress address = new InetSocketAddress(
+				InetAddress.getByName(miniServerOfSender.getIp()),
+				miniServerOfSender.getPort());
 		try (SocketChannel clientChannel = SocketChannel.open(address)) {
 			clientChannel.configureBlocking(false);
 			ByteBuffer buffer = ByteBuffer.allocate(1024);
-
-			// send file path to be downloaded
-			buffer.put(fileToDownload.getBytes());
-			buffer.flip();
-			clientChannel.write(buffer);
-			buffer.clear();
-			buffer.flip();
+			sendFilePathToDownloadFrom(buffer, clientChannel);
 
 			// save file
 			String fileName = (new File(fileToDownload)).getName();
