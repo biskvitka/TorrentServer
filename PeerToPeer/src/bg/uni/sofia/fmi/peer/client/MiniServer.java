@@ -1,6 +1,5 @@
 package bg.uni.sofia.fmi.peer.client;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -9,7 +8,8 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.Charset;	
+import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.util.Iterator;
 
 public class MiniServer implements Runnable {
@@ -53,8 +53,7 @@ public class MiniServer implements Runnable {
 						buffer.flip();
 
 						// then send it to him
-						File fileToSend = new File("/home/gabi/hi.txt");
-						FileChannel fileContent = FileChannel.open(fileToSend.toPath()); //ERROR
+						FileChannel fileContent = FileChannel.open(Paths.get(fileName.replace("\0", "")));
 						int bytesRead = fileContent.read(buffer);
 						while (bytesRead != -1) {
 							buffer.flip();
@@ -62,7 +61,9 @@ public class MiniServer implements Runnable {
 							buffer.compact();
 							bytesRead = fileContent.read(buffer);
 						}
+						
 						fileContent.close();
+						client.close();
 						System.out.println("server: file sent");
 					}
 
